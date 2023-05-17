@@ -1,26 +1,26 @@
-const Driver = require("../models/DriverModel");
-const Car = require("../models/CarModel");
+const Owner = require("../models/ownerModel");
+const ParkingLot = require("../models/ParkingLotModel");
 const bcrypt = require("bcrypt");
 
 const jwt = require("../services/jwt");
 
-const driverTest = (req, res) => {
+const ownerTest = (req, res) => {
     return res.status(200).json({
-        "message": "Message sent from controller/driverController.js"
+        "message": "Message sent from controller/ownerController.js"
     });
 }
 
 const register = async(req, res) => {
     let params = req.body;
-    let driver = new Driver();
+    let owner = new Owner();
 
     if(!params.name || !params.lastName || !params.email || !params.password || !params.idType || !params.idNumber
-        || !params.brand || !params.model || !params.color || !params.plateNumber){
+        || !params.parkingName || !params.location || !params.hoursOfAttention || !params.costHours || !params.accept4x4Truck){
         return res.status(400).json({
             "status": "error",
             "message": "Missing data"
         });
-    } 
+    }
 
     let paramsUser = {
         name: params.name,
@@ -31,47 +31,48 @@ const register = async(req, res) => {
         idNumber: params.idNumber
     }
 
-    let paramsCar = {
-        brand: params.brand,
-        model: params.model,
-        color: params.color,
-        plateNumber: params.plateNumber,
-        driver: 0
+    let paramsParkingLot = {
+        parkingName: params.parkingName,
+        location: params.location,
+        hoursOfAttention: params.hoursOfAttention,
+        costHours: params.costHours,
+        accept4x4Truck: params.accept4x4Truck,
+        owner: 0
     }
 
     try {
-        const drivers = await Driver.find({ $or: [{email: paramsUser.email.toLowerCase()}]});
+        const owners = await Owner.find({ $or: [{email: paramsUser.email.toLowerCase()}]});
 
-        if (drivers && drivers.length >= 1){
+        if (owners && owners.length >= 1){
             return res.status(200).json({
                 "status": "success",
-                "message": "The driver already exists"
+                "message": "The owner already exists"
             });
         }
 
         let pwd = await bcrypt.hash(paramsUser.password, 10);
         paramsUser.password = pwd;
 
-        let driver_to_save = new Driver(paramsUser);
+        let owner_to_save = new Owner(paramsUser);
 
         try {
-            const driverStored = await driver_to_save.save();
+            const ownerStored = await owner_to_save.save();
     
-            if(!driverStored){
+            if(!ownerStored){
                 return res.status(500).json({
                     "status": "error",
-                    "message": "Error while saving driver"
+                    "message": "Error while saving owner"
                 });
             }
 
-            paramsCar.driver = driverStored._id;
+            paramsParkingLot.owner = ownerStored._id;
 
-            driver=driverStored;
+            owner=ownerStored;
 
         } catch {
             return res.status(500).json({
                 "status": "error",
-                "message": "Error while saving driver"
+                "message": "Error while saving owner"
             });
         }
     } catch {
@@ -82,43 +83,43 @@ const register = async(req, res) => {
     }
 
     try {
-        const cars = await Car.find({$or: [{plateNumber: paramsCar.plateNumber.toLowerCase()}]});
+        const parkingLots = await ParkingLot.find({$or: [{location: paramsParkingLot.location.toLowerCase()}]});
 
-        if (cars && cars.length >= 1){
+        if (parkingLots && parkingLots.length >= 1){
             return res.status(200).json({
                 "status": "success",
-                "message": "The car already exists"
+                "message": "The parking lot already exists"
             });
         }
 
-        let car_to_save = new Car(paramsCar);
+        let parking_lot_to_save = new ParkingLot(paramsParkingLot);
 
         try {
-            const carStored = await car_to_save.save();
+            const parkingLotStored = await parking_lot_to_save.save();
 
-            if(!carStored){
+            if(!parkingLotStored){
                 return res.status(500).json({
                     "status": "error",
-                    "message": "No car found"
+                    "message": "No parking lot found"
                 });
             }
 
             return res.status(200).json({
                 "status": "success",
-                "message": "Driver and Car registered",
-                "driver": driver,
-                "car": carStored
+                "message": "Owner and Parking Lot registered",
+                "owner": owner,
+                "parkingLot": parkingLotStored
             });
         } catch {
             return res.status(500).json({
                 "status": "error",
-                "message": "Error while saving car"
+                "message": "Error while saving parking lot"
             });
         }
     } catch {
         return res.status(500).json({
             "status": "error",
-            "message": "Error while finding car"
+            "message": "Error while finding parking lot"
         });
     }
 }
@@ -133,15 +134,15 @@ const login = (req, res) => {
         });
     }
 
-    Driver.findOne({email: params.email}).then( driver =>{
-        if(!driver){
+    Owner.findOne({email: params.email}).then( owner =>{
+        if(!owner){
             return res.status(400).json({
                 "status": "error",
-                "message": "Driver doesn't exist"
+                "message": "owner doesn't exist"
             });
         }
 
-        let pwd = bcrypt.compareSync(params.password, driver.password);
+        let pwd = bcrypt.compareSync(params.password, owner.password);
 
         if(!pwd){
             return res.status(400).json({
@@ -150,15 +151,15 @@ const login = (req, res) => {
             });
         }
 
-        const token = jwt.createToken(driver);
+        const token = jwt.createToken(owner);
 
         return res.status(200).json({
             "status": "success",
             "message": "You have identified correctly",
-            driver: {
-                id: driver._id,
-                name: driver.name,
-                lastName: driver.lastName
+            owner: {
+                id: owner._id,
+                name: owner.name,
+                lastName: owner.lastName
             },
             token
         });
@@ -166,34 +167,34 @@ const login = (req, res) => {
     }).catch( error => {
         return res.status(400).json({
             "status": "error",
-            "message": "Driver doesn't exist"
+            "message": "owner doesn't exist"
         });
     });
 }
 
 const profile = (req, res) => {
-    Driver.findById(req.driver.id).select({password: 0}).then(driver => {
-        if(!driver){
+    Owner.findById(req.owner.id).select({password: 0}).then(owner => {
+        if(!owner){
             return res.status(404).json({
                 "status": "error",
-                "message": "Driver doesn't exist"
+                "message": "owner doesn't exist"
             });
         }
 
         return res.status(200).json({
             "status": "success",
-            "driver": driver
+            "owner": owner
         });
     }).catch( () => {
         return res.status(404).json({
             "status": "error",
-            "message": "Driver doesn't exist"
+            "message": "owner doesn't exist"
         });
     });
 }
 
 module.exports = {
-    driverTest,
+    ownerTest,
     register,
     login,
     profile
