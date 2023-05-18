@@ -1,4 +1,4 @@
-const Owner = require("../models/ownerModel");
+const Owner = require("../models/OwnerModel");
 const ParkingLot = require("../models/ParkingLotModel");
 const bcrypt = require("bcrypt");
 
