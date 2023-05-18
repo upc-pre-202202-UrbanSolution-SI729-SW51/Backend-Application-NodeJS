@@ -18,11 +18,13 @@ const DriverRoutes = require("./routes/driverRoutes");
 const OwnerRoutes = require("./routes/ownerRoutes");
 const ParkingLotRoutes = require("./routes/parkingLotRoutes");
 const CarRoutes = require("./routes/carRoutes");
+const BookingRoutes = require("./routes/bookingRoutes");
 
 app.use("/api/drivers", DriverRoutes);
 app.use("/api/owners", OwnerRoutes);
 app.use("/api/parkingLots", ParkingLotRoutes);
 app.use("/api/cars", CarRoutes);
+app.use("/api/bookings", BookingRoutes);
 
 app.get("/test-route", (req, res) => {
     return res.status(200).json({

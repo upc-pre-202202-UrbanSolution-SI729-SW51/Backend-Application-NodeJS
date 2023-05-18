@@ -24,7 +24,7 @@ exports.auth = (req, res, next) => {
             });
         }
 
-        req.driver = payLoad;
+        req.user = payLoad;
     } catch(error){
         return res.status(404).json({
             "status": "error",

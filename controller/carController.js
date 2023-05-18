@@ -1,7 +1,7 @@
 const Car = require("../models/CarModel");
 
 const list = (req, res) => {
-    Car.find().sort('_id').then(async(cars) => {
+    Car.find().sort('_id').then( cars => {
         if(!cars) {
             return res.status(404).json({
                 status: "Error",
@@ -23,7 +23,7 @@ const list = (req, res) => {
 
 const create = async(req, res) => {
     let params = req.body;
-    let driverId = req.driver.id;
+    let driverId = req.user.id;
 
     if(!params.brand || !params.model || !params.color || !params.plateNumber){
         return res.status(400).json({
@@ -65,8 +65,7 @@ const create = async(req, res) => {
             return res.status(200).json({
                 "status": "success",
                 "message": "Car registered",
-                "car": carStored,
-                "user": req.user
+                "car": carStored
             });
         } catch (error){
             return res.status(500).json({
@@ -83,7 +82,29 @@ const create = async(req, res) => {
     }
 }
 
+const carById = (req, res) => {
+    Car.findById(req.params.id).then(car => {
+        if(!car){
+            return res.status(404).json({
+                "status": "error",
+                "message": "Car doesn't exist"
+            });
+        }
+
+        return res.status(200).json({
+            "status": "success",
+            "car": car
+        });
+    }).catch( () => {
+        return res.status(404).json({
+            "status": "error",
+            "message": "Car doesn't exist"
+        });
+    });
+}
+
 module.exports = {
     list,
-    create
+    create,
+    carById
 }

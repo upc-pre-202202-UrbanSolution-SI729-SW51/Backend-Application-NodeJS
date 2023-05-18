@@ -8,5 +8,6 @@ router.get("/driver-test", DriverController.driverTest);
 router.post("/register", DriverController.register);
 router.post("/login", DriverController.login);
 router.get("/", check.auth, DriverController.profile);
+router.get("/:id", check.auth, DriverController.driverById);
 
 module.exports = router;

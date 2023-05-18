@@ -172,7 +172,28 @@ const login = (req, res) => {
 }
 
 const profile = (req, res) => {
-    Driver.findById(req.driver.id).select({password: 0}).then(driver => {
+    Driver.findById(req.user.id).select({password: 0}).then(driver => {
+        if(!driver){
+            return res.status(404).json({
+                "status": "error",
+                "message": "Driver doesn't exist"
+            });
+        }
+
+        return res.status(200).json({
+            "status": "success",
+            "driver": driver
+        });
+    }).catch( () => {
+        return res.status(404).json({
+            "status": "error",
+            "message": "Driver doesn't exist"
+        });
+    });
+}
+
+const driverById = (req, res) => {
+    Driver.findById(req.params.id).then(driver => {
         if(!driver){
             return res.status(404).json({
                 "status": "error",
@@ -196,5 +217,6 @@ module.exports = {
     driverTest,
     register,
     login,
-    profile
+    profile,
+    driverById
 }

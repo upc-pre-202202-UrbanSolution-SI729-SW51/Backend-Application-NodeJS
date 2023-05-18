@@ -173,7 +173,7 @@ const login = (req, res) => {
 }
 
 const profile = (req, res) => {
-    Owner.findById(req.owner.id).select({password: 0}).then(owner => {
+    Owner.findById(req.user.id).select({password: 0}).then(owner => {
         if(!owner){
             return res.status(404).json({
                 "status": "error",
