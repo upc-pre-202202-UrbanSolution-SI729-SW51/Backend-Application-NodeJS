@@ -15,10 +15,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 const DriverRoutes = require("./routes/driverRoutes");
-const OwnerRoutes = require("./routes/ownerRoutes");
 const ParkingLotRoutes = require("./routes/parkingLotRoutes");
 const CarRoutes = require("./routes/carRoutes");
 const BookingRoutes = require("./routes/bookingRoutes");
+const OwnerRoutes = require("./routes/ownerRoutes");
 
 app.use("/api/drivers", DriverRoutes);
 app.use("/api/owners", OwnerRoutes);
