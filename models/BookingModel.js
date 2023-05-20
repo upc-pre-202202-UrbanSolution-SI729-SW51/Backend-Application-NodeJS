@@ -16,6 +16,26 @@ const BookingSchema = Schema({
     status: {
         type: String,
         required: true
+    },
+    driverName: {
+        type: String,
+        required: true
+    },
+    carBrand: {
+        type: String,
+        required: true
+    },
+    carModel: {
+        type: String,
+        required: true
+    },
+    parkingLotName: {
+        type: String,
+        required: true
+    },
+    parkingLotCostHours: {
+        type: String,
+        required: true
     }
 });
 

@@ -28,6 +28,11 @@ const create = async (req, res) => {
     let driverId = req.user.id;
     let carId = req.user.id;
     let parkingLotId = req.user.id;
+    let driverName = req.user.name;
+    let carBrand = "";
+    let carModel = "";
+    let parkingLotName = "";
+    let parkingLotCostHours = "";
 
     if (!params.car || !params.parkingLot) {
         return res.status(400).json({
@@ -47,6 +52,8 @@ const create = async (req, res) => {
         }
 
         carId = car.id;
+        carBrand = car.brand;
+        carModel = car.model;
     } catch {
         return res.status(404).json({
             "status": "error",
@@ -65,6 +72,8 @@ const create = async (req, res) => {
         }
 
         parkingLotId = parkingLot.id
+        parkingLotName = parkingLot.parkingName
+        parkingLotCostHours = parkingLot.costHours
     } catch {
         return res.status(404).json({
             "status": "error",
@@ -76,7 +85,12 @@ const create = async (req, res) => {
         driver: driverId,
         car: carId,
         parkingLot: parkingLotId,
-        status: "Booked"
+        status: "Booked",
+        driverName: driverName,
+        carBrand: carBrand,
+        carModel: carModel,
+        parkingLotName: parkingLotName,
+        parkingLotCostHours: parkingLotCostHours
     }
 
     let bookings_to_save = new Booking(paramsBooking);
