@@ -21,6 +21,29 @@ const list = (req, res) => {
     });
 }
 
+const myList = (req, res) => {
+    let driverId = req.user.id;
+
+    Car.find({ driver: driverId }).sort('_id').then( cars => {
+        if(!cars) {
+            return res.status(404).json({
+                status: "Error",
+                message: "No cars avaliable..."
+            });
+        }
+
+        return res.status(200).json({
+            "status": "success",
+            cars
+        });
+    }).catch( error => {
+        return res.status(500).json({
+            "status": "error",
+            error
+        });
+    });
+}
+
 const create = async(req, res) => {
     let params = req.body;
     let driverId = req.user.id;
@@ -105,6 +128,7 @@ const carById = (req, res) => {
 
 module.exports = {
     list,
+    myList,
     create,
     carById
 }

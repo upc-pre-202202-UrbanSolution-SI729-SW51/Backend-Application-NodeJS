@@ -23,6 +23,29 @@ const list = (req, res) => {
     });
 }
 
+const myList = (req, res) => {
+    let driverId = req.user.id;
+
+    Booking.find({ driver: driverId }).sort('_id').then(bookings => {
+        if (!bookings) {
+            return res.status(404).json({
+                status: "Error",
+                message: "No bookings avaliable..."
+            });
+        }
+
+        return res.status(200).json({
+            "status": "success",
+            bookings
+        });
+    }).catch(error => {
+        return res.status(500).json({
+            "status": "error",
+            error
+        });
+    });
+}
+
 const create = async (req, res) => {
     let params = req.body;
     let driverId = req.user.id;
@@ -166,6 +189,7 @@ const editBooking = (req, res) => {
 
 module.exports = {
     list,
+    myList,
     create,
     deleteBooking,
     editBooking
