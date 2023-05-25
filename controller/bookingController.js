@@ -3,7 +3,7 @@ const Car = require("../models/CarModel");
 const ParkingLot = require("../models/ParkingLotModel");
 
 const list = (req, res) => {
-    Booking.find().populate("driver car parkingLot", "name brand model parkingName costHours -_id").sort('_id').then(bookings => {
+    Booking.find().populate("driver car parkingLot", "name brand model parkingName costHours").sort('_id').then(bookings => {
         if (!bookings) {
             return res.status(404).json({
                 status: "Error",
