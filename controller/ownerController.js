@@ -192,54 +192,10 @@ const profile = (req, res) => {
         });
     });
 }
-//Endpoits for flutter mobile app v1
-const list = (req, res) => {
-    Owner.find().sort('_id').then( owners => {
-        if(!owners) {
-            return res.status(404).json({
-                status: "Error",
-                message: "No owners avaliable..."
-            });
-        }
-
-        return res.status(200).json({
-            "status": "success",
-            owners
-        });
-    }).catch( error => {
-        return res.status(500).json({
-            "status": "error",
-            error
-        });
-    });
-}
-
-const getById = (req, res) => {
-    Owner.findById(req.params.id).then(owner => {
-        if(!owner){
-            return res.status(404).json({
-                "status": "error",
-                "message": "Owner doesn't exist"
-            });
-        }
-
-        return res.status(200).json({
-            "status": "success",
-            "owner": owner
-        });
-    }).catch( () => {
-        return res.status(404).json({
-            "status": "error",
-            "message": "Owner doesn't exist"
-        });
-    });
-}
 
 module.exports = {
     ownerTest,
     register,
     login,
-    profile,
-    list,
-    getById
+    profile
 }

@@ -172,7 +172,7 @@ const editBooking = (req, res) => {
         })
     })
 }
-//Endpoits for flutter mobile app v1
+
 const getByParkingLotId = (req, res) => {
     let parkingLotId = req.params.idParkingLot;
 
