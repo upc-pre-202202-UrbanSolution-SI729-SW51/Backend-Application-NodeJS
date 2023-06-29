@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const connection = async() => {
     try {
 
-        await mongoose.connect("mongodb://mongo:3t0moHH35fWEvGfTu46h@containers-us-west-41.railway.app:6051/");
+        await mongoose.connect("mongodb://mongo:2NzrokZ1ARrklHZbxiBP@containers-us-west-105.railway.app:7108/");
         console.log("Connected to the api_rest_social_media database");
 
     } catch(error) {
