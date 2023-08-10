@@ -4,12 +4,6 @@ const bcrypt = require("bcrypt");
 
 const jwt = require("../services/jwt");
 
-const ownerTest = (req, res) => {
-    return res.status(200).json({
-        "message": "Message sent from controller/ownerController.js"
-    });
-}
-
 const register = async(req, res) => {
     let params = req.body;
     let owner = new Owner();
@@ -194,7 +188,6 @@ const profile = (req, res) => {
 }
 
 module.exports = {
-    ownerTest,
     register,
     login,
     profile

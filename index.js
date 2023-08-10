@@ -4,7 +4,9 @@ const cors = require("cors");
 
 console.log("Social Media REST API NODE started")
 
-connection();
+const uri = process.env.MONGO_URI || "mongodb+srv://joserodrigolopez:xK22YDi1adZJdw25@mongodbdeployed.nr8iyxd.mongodb.net/freeplace_back";
+
+connection(uri);
 
 const app = express();
 const port = process.env.PORT || 3000;

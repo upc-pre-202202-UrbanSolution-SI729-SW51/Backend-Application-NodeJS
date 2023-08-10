@@ -4,12 +4,6 @@ const bcrypt = require("bcrypt");
 
 const jwt = require("../services/jwt");
 
-const driverTest = (req, res) => {
-    return res.status(200).json({
-        "message": "Message sent from controller/driverController.js"
-    });
-}
-
 const register = async(req, res) => {
     let params = req.body;
     let driver = new Driver();
@@ -214,7 +208,6 @@ const driverById = (req, res) => {
 }
 
 module.exports = {
-    driverTest,
     register,
     login,
     profile,
