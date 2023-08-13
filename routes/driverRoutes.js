@@ -5,7 +5,7 @@ const check = require("../middlewares/auth");
 
 router.post("/register", DriverController.register);
 router.post("/login", DriverController.login);
-router.get("/", check.auth, DriverController.profile);
-router.get("/:id", DriverController.driverById);
+router.get("/profile", check.auth, DriverController.profile);
+router.get("/", DriverController.driverById);
 
 module.exports = router;

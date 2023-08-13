@@ -6,6 +6,6 @@ const check = require("../middlewares/auth");
 router.get("/list", CarController.list);
 router.get("/myList", check.auth, CarController.myList);
 router.post("/", check.auth, CarController.create);
-router.get("/:id", CarController.carById);
+router.get("/", CarController.carById);
 
 module.exports = router;

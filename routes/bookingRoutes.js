@@ -6,8 +6,8 @@ const check = require("../middlewares/auth");
 router.get("/list", BookingController.list);
 router.get("/myList", check.auth, BookingController.myList);
 router.post("/", check.auth, BookingController.create);
-router.delete("/:id", BookingController.deleteBooking);
-router.put("/:id", BookingController.editBooking);
-router.get("/parkingLot/:idParkingLot", BookingController.getByParkingLotId);
+router.delete("/", BookingController.deleteBooking);
+router.put("/", BookingController.editBooking);
+router.get("/parkingLot", BookingController.getByParkingLotId);
 
 module.exports = router;
