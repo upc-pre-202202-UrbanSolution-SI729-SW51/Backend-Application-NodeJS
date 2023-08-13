@@ -47,12 +47,12 @@ const myList = (req, res) => {
 }
 
 const create = async (req, res) => {
-    let params = req.body;
+    let body = req.body;
     let driverId = req.user.id;
     let carId = req.user.id;
     let parkingLotId = req.user.id;
 
-    if (!params.car || !params.parkingLot) {
+    if (!body.car || !body.parkingLot) {
         return res.status(400).json({
             "status": "error",
             "message": "Missing data"
@@ -60,7 +60,7 @@ const create = async (req, res) => {
     }
 
     try {
-        const car = await Car.findById(params.car);
+        const car = await Car.findById(body.car);
 
         if (!car) {
             return res.status(404).json({
@@ -73,12 +73,12 @@ const create = async (req, res) => {
     } catch {
         return res.status(404).json({
             "status": "error",
-            "message": "Car doesn't exist"
+            "message": "Error while finding car in booking endpoint post"
         });
     }
 
     try {
-        const parkingLot = await ParkingLot.findById(params.parkingLot);
+        const parkingLot = await ParkingLot.findById(body.parkingLot);
 
         if (!parkingLot) {
             return res.status(404).json({
@@ -91,18 +91,18 @@ const create = async (req, res) => {
     } catch {
         return res.status(404).json({
             "status": "error",
-            "message": "Parking lot doesn't exist"
+            "message": "Error while finding parking lot in booking endpoint post"
         });
     }
 
-    let paramsBooking = {
+    let bodyBooking = {
         driver: driverId,
         car: carId,
         parkingLot: parkingLotId,
         status: "Booked"
     }
 
-    let bookings_to_save = new Booking(paramsBooking);
+    let bookings_to_save = new Booking(bodyBooking);
 
     try {
         const bookingStored = await bookings_to_save.save();
@@ -110,7 +110,7 @@ const create = async (req, res) => {
         if (!bookingStored) {
             return res.status(500).json({
                 "status": "error",
-                "message": "No bookings found"
+                "message": "No booking saved"
             });
         }
 
@@ -129,13 +129,13 @@ const create = async (req, res) => {
 }
 
 const deleteBooking = (req, res) => {
-    let id = req.params.id;
+    let id = req.query.idBooking;
 
-    Booking.findOneAndDelete({_id: id}).then((deletedBooking) => {
+    Booking.findOneAndDelete({ _id: id }).then(deletedBooking => {
         if (!deletedBooking) {
             return res.status(404).json({
-              status: "error",
-              mensaje: "Booking not found"
+                status: "error",
+                mensaje: "Booking not found"
             })
         }
         return res.status(200).send({
@@ -143,38 +143,38 @@ const deleteBooking = (req, res) => {
             booking: deletedBooking
         });
     }
-    ).catch( () => {
+    ).catch(() => {
         return res.status(404).json({
             status: "error",
-            mensaje: "Booking not found"
+            mensaje: "Error while finding and deleting booking"
         })
     });
 }
 
 const editBooking = (req, res) => {
-    let id = req.params.id;
+    let id = req.query.idBooking;
 
-    Booking.findOneAndUpdate({_id: id}, req.body, {new: true}).then((bookingUpdated) => {
+    Booking.findOneAndUpdate({ _id: id }, req.body, { new: true }).then(bookingUpdated => {
         if (!bookingUpdated) {
             return res.status(404).json({
-              status: "error",
-              mensaje: "Booking not found"
+                status: "error",
+                mensaje: "Booking not found"
             })
         }
         return res.status(200).send({
             status: "success",
             booking: bookingUpdated
         });
-    }).catch( () => {
+    }).catch(() => {
         return res.status(404).json({
             status: "error",
-            mensaje: "Booking not found"
+            mensaje: "Error while finding and updating booking"
         })
     })
 }
 
 const getByParkingLotId = (req, res) => {
-    let parkingLotId = req.params.idParkingLot;
+    let parkingLotId = req.query.idParkingLot;
 
     Booking.find({ parkingLot: parkingLotId }).populate("driver car parkingLot", "name brand model parkingName costHours -_id").sort('_id').then(bookings => {
         if (!bookings) {

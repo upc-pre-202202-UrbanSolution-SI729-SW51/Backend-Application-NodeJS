@@ -1,8 +1,8 @@
 const ParkingLot = require("../models/ParkingLotModel");
 
 const list = (req, res) => {
-    ParkingLot.find().sort('_id').then(async(parkingLots) => {
-        if(!parkingLots) {
+    ParkingLot.find().sort('_id').then(parkingLots => {
+        if (!parkingLots) {
             return res.status(404).json({
                 status: "Error",
                 message: "No parking lots avaliable..."
@@ -13,7 +13,7 @@ const list = (req, res) => {
             "status": "success",
             parkingLots
         });
-    }).catch( error => {
+    }).catch(error => {
         return res.status(500).json({
             "status": "error",
             error
@@ -24,8 +24,8 @@ const list = (req, res) => {
 const myList = (req, res) => {
     let ownerId = req.user.id;
 
-    ParkingLot.find({owner: ownerId}).sort('_id').then(async(parkingLots) => {
-        if(!parkingLots) {
+    ParkingLot.find({ owner: ownerId }).sort('_id').then(parkingLots => {
+        if (!parkingLots) {
             return res.status(404).json({
                 status: "Error",
                 message: "No parking lots avaliable..."
@@ -36,7 +36,7 @@ const myList = (req, res) => {
             "status": "success",
             parkingLots
         });
-    }).catch( error => {
+    }).catch(error => {
         return res.status(500).json({
             "status": "error",
             error
@@ -44,45 +44,45 @@ const myList = (req, res) => {
     });
 }
 
-const create = async(req, res) => {
-    let params = req.body;
+const create = async (req, res) => {
+    let body = req.body;
     let ownerId = req.user.id;
 
-    if(!params.parkingName || !params.location || !params.hoursOfAttention || !params.costHours || !params.accept4x4Truck){
+    if (!body.parkingName || !body.location || !body.hoursOfAttention || !body.costHours || !body.accept4x4Truck) {
         return res.status(400).json({
             "status": "error",
             "message": "Missing data"
         });
-    } 
+    }
 
-    let paramsParkingLot = {
-        parkingName: params.parkingName,
-        location: params.location,
-        hoursOfAttention: params.hoursOfAttention,
-        costHours: params.costHours,
-        accept4x4Truck: params.accept4x4Truck,
+    let bodyParkingLot = {
+        parkingName: body.parkingName,
+        location: body.location,
+        hoursOfAttention: body.hoursOfAttention,
+        costHours: body.costHours,
+        accept4x4Truck: body.accept4x4Truck,
         owner: ownerId
     }
 
     try {
-        const parkingLots = await ParkingLot.find({$or: [{location: paramsParkingLot.location.toLowerCase()}]});
+        const parkingLots = await ParkingLot.find({ $or: [{ location: bodyParkingLot.location.toLowerCase() }] });
 
-        if (parkingLots && parkingLots.length >= 1){
+        if (parkingLots && parkingLots.length >= 1) {
             return res.status(200).json({
                 "status": "success",
                 "message": "The parking lot already exists"
             });
         }
 
-        let parking_lot_to_save = new ParkingLot(paramsParkingLot);
+        let parking_lot_to_save = new ParkingLot(bodyParkingLot);
 
         try {
             const parkingLotStored = await parking_lot_to_save.save();
 
-            if(!parkingLotStored){
+            if (!parkingLotStored) {
                 return res.status(500).json({
                     "status": "error",
-                    "message": "No parking lot found"
+                    "message": "No parking lot saved"
                 });
             }
 
@@ -91,7 +91,7 @@ const create = async(req, res) => {
                 "message": "Parking lot registered",
                 "parking lot": parkingLotStored
             });
-        } catch (error){
+        } catch (error) {
             return res.status(500).json({
                 "status": "error",
                 "message": "Error while saving parking lot",
@@ -101,14 +101,14 @@ const create = async(req, res) => {
     } catch {
         return res.status(500).json({
             "status": "error",
-            "message": "Error while finding parking lot"
+            "message": "Error while finding parking lot duplicate"
         });
     }
 }
 
 const parkingLotById = (req, res) => {
-    ParkingLot.findById(req.params.id).then(parkingLot => {
-        if(!parkingLot){
+    ParkingLot.findById(req.query.idParking).then(parkingLot => {
+        if (!parkingLot) {
             return res.status(404).json({
                 "status": "error",
                 "message": "Parking lot doesn't exist"
@@ -119,44 +119,44 @@ const parkingLotById = (req, res) => {
             "status": "success",
             "parkingLot": parkingLot
         });
-    }).catch( () => {
+    }).catch(() => {
         return res.status(404).json({
             "status": "error",
-            "message": "Parking lot doesn't exist"
+            "message": "Error while finding parking lot"
         });
     });
 }
 
 const editParkingLot = (req, res) => {
-    let id = req.params.id;
+    let id = req.query.idParkingLot;
 
-    ParkingLot.findOneAndUpdate({_id: id}, req.body, {new: true}).then((parkingLotUpdated) => {
+    ParkingLot.findOneAndUpdate({ _id: id }, req.body, { new: true }).then(parkingLotUpdated => {
         if (!parkingLotUpdated) {
             return res.status(404).json({
-              status: "error",
-              mensaje: "Parking Lot not found"
+                status: "error",
+                mensaje: "Parking Lot not found"
             })
         }
         return res.status(200).send({
             status: "success",
             parkingLot: parkingLotUpdated
         });
-    }).catch( () => {
+    }).catch(() => {
         return res.status(404).json({
             status: "error",
-            mensaje: "Parking Lot not found"
+            mensaje: "Error while finding and updating parking lot"
         })
     })
 }
 
 const deleteParkingLot = (req, res) => {
-    let id = req.params.id;
+    let id = req.query.idParkingLot;
 
-    ParkingLot.findOneAndDelete({_id: id}).then((deletedParkingLot) => {
+    ParkingLot.findOneAndDelete({ _id: id }).then(deletedParkingLot => {
         if (!deletedParkingLot) {
             return res.status(404).json({
-              status: "error",
-              mensaje: "Parking lot not found"
+                status: "error",
+                mensaje: "Parking lot not found"
             })
         }
         return res.status(200).send({
@@ -164,10 +164,10 @@ const deleteParkingLot = (req, res) => {
             parkingLot: deletedParkingLot
         });
     }
-    ).catch( () => {
+    ).catch(() => {
         return res.status(404).json({
             status: "error",
-            mensaje: "Parking lot not found"
+            mensaje: "Error while finding and deleting parking lot"
         })
     });
 }

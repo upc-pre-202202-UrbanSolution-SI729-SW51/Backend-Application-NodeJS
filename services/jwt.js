@@ -6,8 +6,6 @@ const secret = "Secret_Key_from_FreePlace_project_022506";
 const createToken = (driver) => {
     const payLoad = {
         id: driver._id,
-        name: driver.name,
-        lastName: driver.lastName,
         email: driver.email,
         idNumber: driver.idNumber,
         idType: driver.idType,

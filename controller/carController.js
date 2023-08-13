@@ -1,8 +1,8 @@
 const Car = require("../models/CarModel");
 
 const list = (req, res) => {
-    Car.find().sort('_id').then( cars => {
-        if(!cars) {
+    Car.find().sort('_id').then(cars => {
+        if (!cars) {
             return res.status(404).json({
                 status: "Error",
                 message: "No cars avaliable..."
@@ -13,7 +13,7 @@ const list = (req, res) => {
             "status": "success",
             cars
         });
-    }).catch( error => {
+    }).catch(error => {
         return res.status(500).json({
             "status": "error",
             error
@@ -24,8 +24,8 @@ const list = (req, res) => {
 const myList = (req, res) => {
     let driverId = req.user.id;
 
-    Car.find({ driver: driverId }).sort('_id').then( cars => {
-        if(!cars) {
+    Car.find({ driver: driverId }).sort('_id').then(cars => {
+        if (!cars) {
             return res.status(404).json({
                 status: "Error",
                 message: "No cars avaliable..."
@@ -36,7 +36,7 @@ const myList = (req, res) => {
             "status": "success",
             cars
         });
-    }).catch( error => {
+    }).catch(error => {
         return res.status(500).json({
             "status": "error",
             error
@@ -44,44 +44,44 @@ const myList = (req, res) => {
     });
 }
 
-const create = async(req, res) => {
-    let params = req.body;
+const create = async (req, res) => {
+    let body = req.body;
     let driverId = req.user.id;
 
-    if(!params.brand || !params.model || !params.color || !params.plateNumber){
+    if (!body.brand || !body.model || !body.color || !body.plateNumber) {
         return res.status(400).json({
             "status": "error",
             "message": "Missing data"
         });
-    } 
+    }
 
-    let paramsCar = {
-        brand: params.brand,
-        model: params.model,
-        color: params.color,
-        plateNumber: params.plateNumber,
+    let bodyCar = {
+        brand: body.brand,
+        model: body.model,
+        color: body.color,
+        plateNumber: body.plateNumber,
         driver: driverId
     }
 
     try {
-        const cars = await Car.find({$or: [{plateNumber: paramsCar.plateNumber.toLowerCase()}]});
+        const cars = await Car.find({ $or: [{ plateNumber: bodyCar.plateNumber.toLowerCase() }] });
 
-        if (cars && cars.length >= 1){
+        if (cars && cars.length >= 1) {
             return res.status(200).json({
                 "status": "success",
                 "message": "The car already exists"
             });
         }
 
-        let car_to_save = new Car(paramsCar);
+        let car_to_save = new Car(bodyCar);
 
         try {
             const carStored = await car_to_save.save();
 
-            if(!carStored){
+            if (!carStored) {
                 return res.status(500).json({
                     "status": "error",
-                    "message": "No car found"
+                    "message": "No car saved"
                 });
             }
 
@@ -90,7 +90,7 @@ const create = async(req, res) => {
                 "message": "Car registered",
                 "car": carStored
             });
-        } catch (error){
+        } catch (error) {
             return res.status(500).json({
                 "status": "error",
                 "message": "Error while saving car",
@@ -100,14 +100,14 @@ const create = async(req, res) => {
     } catch {
         return res.status(500).json({
             "status": "error",
-            "message": "Error while finding car"
+            "message": "Error while finding car duplicate"
         });
     }
 }
 
 const carById = (req, res) => {
-    Car.findById(req.params.id).then(car => {
-        if(!car){
+    Car.findById(req.query.idCar).then(car => {
+        if (!car) {
             return res.status(404).json({
                 "status": "error",
                 "message": "Car doesn't exist"
@@ -118,10 +118,10 @@ const carById = (req, res) => {
             "status": "success",
             "car": car
         });
-    }).catch( () => {
+    }).catch(() => {
         return res.status(404).json({
             "status": "error",
-            "message": "Car doesn't exist"
+            "message": "Error while finding car"
         });
     });
 }

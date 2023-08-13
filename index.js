@@ -1,8 +1,8 @@
-const {connection} = require("./database/connection");
+const { connection } = require("./database/connection");
 const express = require("express");
 const cors = require("cors");
 
-console.log("Social Media REST API NODE started")
+console.log("Social Media REST API NODE started");
 
 const uri = process.env.MONGO_URI || "mongodb+srv://joserodrigolopez:xK22YDi1adZJdw25@mongodbdeployed.nr8iyxd.mongodb.net/freeplace_back";
 
@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 const DriverRoutes = require("./routes/driverRoutes");
 const ParkingLotRoutes = require("./routes/parkingLotRoutes");
