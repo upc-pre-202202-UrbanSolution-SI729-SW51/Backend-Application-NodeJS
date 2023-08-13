@@ -1,6 +1,4 @@
 const Booking = require("../models/BookingModel");
-const Car = require("../models/CarModel");
-const ParkingLot = require("../models/ParkingLotModel");
 
 const list = (req, res) => {
     Booking.find().populate("driver car parkingLot", "name brand model parkingName costHours").sort('_id').then(bookings => {
@@ -47,53 +45,9 @@ const myList = (req, res) => {
 }
 
 const create = async (req, res) => {
-    let body = req.body;
     let driverId = req.user.id;
-    let carId = req.user.id;
-    let parkingLotId = req.user.id;
-
-    if (!body.car || !body.parkingLot) {
-        return res.status(400).json({
-            "status": "error",
-            "message": "Missing data"
-        });
-    }
-
-    try {
-        const car = await Car.findById(body.car);
-
-        if (!car) {
-            return res.status(404).json({
-                "status": "error",
-                "message": "Car doesn't exist"
-            });
-        }
-
-        carId = car.id;
-    } catch {
-        return res.status(404).json({
-            "status": "error",
-            "message": "Error while finding car in booking endpoint post"
-        });
-    }
-
-    try {
-        const parkingLot = await ParkingLot.findById(body.parkingLot);
-
-        if (!parkingLot) {
-            return res.status(404).json({
-                "status": "error",
-                "message": "Parking lot doesn't exist"
-            });
-        }
-
-        parkingLotId = parkingLot.id
-    } catch {
-        return res.status(404).json({
-            "status": "error",
-            "message": "Error while finding parking lot in booking endpoint post"
-        });
-    }
+    let carId = req.query.idCar;
+    let parkingLotId = req.query.idParkingLot;
 
     let bodyBooking = {
         driver: driverId,
