@@ -10,7 +10,7 @@ const ParkingLotAditionalServiceSchema = Schema({
         ref: "AditionalService"
     },
     price: {
-        type: String,
+        type: Number,
         required: true
     }
 });
