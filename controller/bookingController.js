@@ -1,4 +1,5 @@
 const Booking = require("../models/BookingModel");
+const ParkingLot = require("../models/ParkingLotModel")
 
 const list = (req, res) => {
     Booking.find().populate("driver car parkingLot", "name brand model parkingName costHours").sort('_id').then(bookings => {
@@ -107,6 +108,7 @@ const deleteBooking = (req, res) => {
 
 const editBooking = (req, res) => {
     let id = req.query.idBooking;
+    let availableSpacesCount = parseInt(req.query.availableSpaces);
 
     Booking.findOneAndUpdate({ _id: id }, req.body, { new: true }).then(bookingUpdated => {
         if (!bookingUpdated) {
@@ -115,6 +117,32 @@ const editBooking = (req, res) => {
                 mensaje: "Booking not found"
             })
         }
+
+        if (req.body.status == "Started") {
+            availableSpacesCount = availableSpacesCount - 1;
+        } else if (req.body.status == "Completed") {
+            availableSpacesCount = availableSpacesCount + 1;
+        }
+
+        let bodyParkingUpdated = {
+            availableSpaces: availableSpacesCount
+        }
+
+        ParkingLot.findOneAndUpdate({ _id: bookingUpdated.parkingLot }, bodyParkingUpdated, { new: true }).then(parkingLotUpdated => {
+            if (!parkingLotUpdated) {
+                return res.status(404).json({
+                    status: "error",
+                    mensaje: "Parking Lot not found"
+                })
+            }
+
+        }).catch(() => {
+            return res.status(404).json({
+                status: "error",
+                mensaje: "Error while finding and updating parking lot"
+            })
+        });
+
         return res.status(200).send({
             status: "success",
             booking: bookingUpdated

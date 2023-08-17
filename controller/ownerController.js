@@ -9,7 +9,8 @@ const register = async (req, res) => {
     let owner = new Owner();
 
     if (!body.name || !body.lastName || !body.email || !body.password || !body.idType || !body.idNumber
-        || !body.parkingName || !body.location || !body.hoursOfAttention || !body.costHours || !body.accept4x4Truck) {
+        || !body.parkingName || !body.location || !body.hoursOfAttention || !body.costHours || !body.accept4x4Truck
+        || !body.totalSpaces || !body.availableSpaces) {
         return res.status(400).json({
             "status": "error",
             "message": "Missing data"
@@ -31,7 +32,9 @@ const register = async (req, res) => {
         hoursOfAttention: body.hoursOfAttention,
         costHours: body.costHours,
         accept4x4Truck: body.accept4x4Truck,
-        owner: 0
+        owner: 0,
+        totalSpaces: body.totalSpaces,
+        availableSpaces: body.availableSpaces
     }
 
     try {

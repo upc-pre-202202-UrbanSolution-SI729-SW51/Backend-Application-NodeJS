@@ -48,7 +48,8 @@ const create = async (req, res) => {
     let body = req.body;
     let ownerId = req.user.id;
 
-    if (!body.parkingName || !body.location || !body.hoursOfAttention || !body.costHours || !body.accept4x4Truck) {
+    if (!body.parkingName || !body.location || !body.hoursOfAttention || !body.costHours || !body.accept4x4Truck
+        || !body.totalSpaces || !body.availableSpaces) {
         return res.status(400).json({
             "status": "error",
             "message": "Missing data"
@@ -61,7 +62,9 @@ const create = async (req, res) => {
         hoursOfAttention: body.hoursOfAttention,
         costHours: body.costHours,
         accept4x4Truck: body.accept4x4Truck,
-        owner: ownerId
+        owner: ownerId,
+        totalSpaces: body.totalSpaces,
+        availableSpaces: body.availableSpaces
     }
 
     try {

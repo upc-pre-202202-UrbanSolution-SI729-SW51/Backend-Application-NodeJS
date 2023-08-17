@@ -24,6 +24,14 @@ const ParkingLotSchema = Schema({
     owner: {
         type: Schema.ObjectId,
         ref: "Owner"
+    },
+    totalSpaces: {
+        type: Number,
+        required: true
+    },
+    availableSpaces: {
+        type: Number,
+        required: true
     }
 });
 
