@@ -88,9 +88,14 @@ const sendToDriver = async (req, res) => {
     }
 }
 
-const getConversationByDriverId = (req, res) => {
+const getConversationByDriverIdAndMarkAsRead = async (req, res) => {
     let driverId = req.user.id;
     let ownerId = req.query.idOwner;
+
+    await Message.updateMany(
+        { $and: [{ driver: driverId }, { owner: ownerId }, { seen: false }] },
+        { $set: { seen: true } }
+    );
 
     Message.find({ $and: [{ driver: driverId }, { owner: ownerId }] }).populate("driver owner", "name -_id").sort('date').then(messages => {
         if (!messages) {
@@ -112,9 +117,14 @@ const getConversationByDriverId = (req, res) => {
     });
 }
 
-const getConversationByOwnerId = (req, res) => {
+const getConversationByOwnerIdAndMarkAsRead = async (req, res) => {
     let ownerId = req.user.id;
     let driverId = req.query.idDriver;
+
+    await Message.updateMany(
+        { $and: [{ driver: driverId }, { owner: ownerId }, { seen: false }] },
+        { $set: { seen: true } }
+    );
 
     Message.find({ $and: [{ driver: driverId }, { owner: ownerId }] }).populate("driver owner", "name -_id").sort('date').then(messages => {
         if (!messages) {
@@ -127,6 +137,52 @@ const getConversationByOwnerId = (req, res) => {
         return res.status(200).json({
             "status": "success",
             messages
+        });
+    }).catch(error => {
+        return res.status(500).json({
+            "status": "error",
+            error
+        });
+    });
+}
+
+const getAllConversationsFromDriverToken = (req, res) => {
+    let driverId = req.user.id;
+
+    Message.distinct("owner", { driver: driverId }).then(messagesFromOwners => {
+        if (!messagesFromOwners) {
+            return res.status(404).json({
+                status: "Error",
+                message: "No messages avaliable..."
+            });
+        }
+
+        return res.status(200).json({
+            "status": "success",
+            messagesFromOwners
+        });
+    }).catch(error => {
+        return res.status(500).json({
+            "status": "error",
+            error
+        });
+    });
+}
+
+const getAllConversationsFromOwnerToken = (req, res) => {
+    let ownerId = req.user.id;
+
+    Message.distinct("driver", { owner: ownerId }).then(messagesFromDrivers => {
+        if (!messagesFromDrivers) {
+            return res.status(404).json({
+                status: "Error",
+                message: "No messages avaliable..."
+            });
+        }
+
+        return res.status(200).json({
+            "status": "success",
+            messagesFromDrivers
         });
     }).catch(error => {
         return res.status(500).json({
@@ -139,6 +195,8 @@ const getConversationByOwnerId = (req, res) => {
 module.exports = {
     sendToDriver,
     sendToOwner,
-    getConversationByDriverId,
-    getConversationByOwnerId
+    getConversationByDriverIdAndMarkAsRead,
+    getConversationByOwnerIdAndMarkAsRead,
+    getAllConversationsFromDriverToken,
+    getAllConversationsFromOwnerToken
 }
