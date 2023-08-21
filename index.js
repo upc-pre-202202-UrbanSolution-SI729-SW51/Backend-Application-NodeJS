@@ -25,6 +25,8 @@ const FeedbackRoutes = require("./routes/feedbackRoutes");
 const MessageRoutes = require("./routes/messageRoutes");
 const AditionalServiceRoutes = require("./routes/aditionalServiceRoutes");
 const ParkingLotAditionalServiceRoutes = require("./routes/parkingLotAditionalServiceRoutes");
+const SuscriptionRequestRoutes = require("./routes/suscriptionRequestRoutes");
+const SuscriptionRoutes = require("./routes/suscriptionRoutes");
 
 app.use("/api/drivers", DriverRoutes);
 app.use("/api/owners", OwnerRoutes);
@@ -35,6 +37,8 @@ app.use("/api/feedbacks", FeedbackRoutes);
 app.use("/api/messages", MessageRoutes);
 app.use("/api/aditionalServices", AditionalServiceRoutes);
 app.use("/api/parkingLotsAditionalServices", ParkingLotAditionalServiceRoutes);
+app.use("/api/suscriptionRequests", SuscriptionRequestRoutes);
+app.use("/api/suscriptions", SuscriptionRoutes);
 
 app.get("/test-route", (req, res) => {
     return res.status(200).json({
